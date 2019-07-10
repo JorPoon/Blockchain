@@ -95,7 +95,10 @@ class Blockchain(object):
         leading zeroes?
         """
         # TODO
-        pass
+        guess = f'{last_proof}{proof}'.encode()
+        gues_hash = hashlib.sha256(guess).hexdigest()
+        
+        return gues_hash[:4] == "0000"
 
     def valid_chain(self, chain):
         """
@@ -144,12 +147,14 @@ def mine():
 
     # We must receive a reward for finding the proof.
     # TODO:
+    blockchain.new_transaction(0, node_identifier, 1)
     # The sender is "0" to signify that this node has mine a new coin
     # The recipient is the current node, it did the mining!
     # The amount is 1 coin as a reward for mining the next block
 
     # Forge the new Block by adding it to the chain
-    # TODO
+    # TODO:
+    block = blockchain.new_block(proof, hash(blockchain.hash(blockchain.last_block)))
 
     # Send a response with the new block
     response = {
@@ -158,6 +163,8 @@ def mine():
         'transactions': block['transactions'],
         'proof': block['proof'],
         'previous_hash': block['previous_hash'],
+
+        # "proof": proof
     }
     return jsonify(response), 200
 
