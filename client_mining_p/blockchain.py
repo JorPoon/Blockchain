@@ -142,24 +142,30 @@ blockchain = Blockchain()
 
 @app.route('/mine', methods=['POST'])
 def mine():
+    values = request.get_json()
+
+    # Check that the required fields are in the POST'ed data
+    required = ['proof']
+    if not all(k in values for k in required):
+        return 'Missing Values', 400
     # We run the proof of work algorithm to get the next proof...
     last_block = blockchain.last_block
     last_proof = last_block['proof']
     # proof = blockchain.proof_of_work(last_proof)
-    if blockchain.valid_proof(last_proof, request.form) is True:
+    if blockchain.valid_proof(last_proof, values['proof']) is True:
         
 
     # We must receive a reward for finding the proof.
     # The sender is "0" to signify that this node has mine a new coin
         blockchain.new_transaction(
             sender="0",
-            recipient=node_identifier,
+            recipient= "Jor",
             amount=1,
         )
 
         # Forge the new BLock by adding it to the chain
         previous_hash = blockchain.hash(last_block)
-        block = blockchain.new_block(request.form, previous_hash)
+        block = blockchain.new_block(values['proof'], previous_hash)
 
         response = {
             'message': "New Block Forged",
@@ -168,9 +174,9 @@ def mine():
             'proof': block['proof'],
             'previous_hash': block['previous_hash'],
         }
-        return jsonify(response), 200
+        return jsonify(response), 201
     else:
-        return "Keep Mining!!!"
+        return "Keep Mining!!!", 400
 
 
 @app.route('/transactions/new', methods=['POST'])
@@ -201,7 +207,7 @@ def full_chain():
 
 
 # -------------------------------------------------
-@app.route('/last-proof', methods=['GET'])
+@app.route('/proof', methods=['GET'])
 def prior_proof():
     response = {
         'last_proof': blockchain.chain[-1]['proof']
