@@ -9,6 +9,9 @@ flake8 = "*"
 [packages]
 requests = "==2.18.4"
 flask = "==0.12.2"
+deps = "*"
+uuid = "*"
+os-path = "*"
 
 [requires]
 python_version = "3.7"
